@@ -1,0 +1,25 @@
+jar.baseName = 'std-api'
+
+ext { generatedSourcesDir = file("src/main/generated") }
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir generatedSourcesDir
+        }
+    }
+}
+
+dependencies {
+    compile project(':v-std-service-user')
+
+    compile 'io.vertx:vertx-web'
+    compile 'io.vertx:vertx-auth-jwt'
+
+    compile 'de.svenkubiak:jBCrypt:0.4'
+//    compile "com.nimbusds:nimbus-jose-jwt:3.9"
+
+    compile 'com.google.dagger:dagger'
+    optional 'com.google.dagger:dagger-compiler'
+}

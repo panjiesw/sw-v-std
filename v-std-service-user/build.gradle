@@ -1,0 +1,74 @@
+jar.baseName = 'blangszj-service-user'
+
+apply plugin: 'nu.studer.jooq'
+
+ext { generatedSourcesDir = file("src/main/generated") }
+
+sourceSets {
+    main {
+        java {
+            srcDir 'src/main/java'
+            srcDir generatedSourcesDir
+        }
+    }
+}
+
+jooq {
+    sample(sourceSets.main) {
+        jdbc {
+            driver = 'org.postgresql.Driver'
+            url = 'jdbc:postgresql://localhost:5432/sw-v-std'
+            user = 'blangszut'
+            password = 'qwe123'
+            schema = 'public'
+        }
+        generator {
+            name = 'org.jooq.util.DefaultGenerator'
+            strategy {
+                name = 'org.jooq.util.DefaultGeneratorStrategy'
+                // ...
+            }
+            database {
+                name = 'org.jooq.util.postgres.PostgresDatabase'
+                inputSchema = 'public'
+                excludes = 'vs_database_diagrams'
+                // ...
+            }
+            generate {
+                relations = true
+                deprecated = false
+                records = true
+                immutablePojos = false
+                fluentSetters = true
+                // ...
+            }
+            target {
+                packageName = 'com.panjiesw.std.service.user.sql'
+                directory = 'src/main/generated'
+            }
+        }
+    }
+}
+
+task codegen(type: JavaCompile) {
+    source = sourceSets.main.java
+    classpath = sourceSets.main.output + configurations.compile
+    options.compilerArgs += [
+        '-processor',
+        'io.vertx.codegen.CodeGenProcessor'
+    ]
+    options.compilerArgs += [
+        "-AoutputDirectory=$projectDir/src/main"
+    ]
+    options.compilerArgs += ['-s', generatedSourcesDir]
+    options.compilerArgs += ['-proc:only']
+    destinationDir = generatedSourcesDir
+}
+
+dependencies {
+    compile 'io.vertx:vertx-mysql-postgresql-client'
+    compile 'org.jooq:jooq'
+    compile 'org.jooq:jooq-meta'
+    compile 'org.jooq:jooq-codegen'
+    compile 'org.postgresql:postgresql'
+}

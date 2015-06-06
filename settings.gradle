@@ -1,0 +1,4 @@
+rootProject.name = 'sw-v-std'
+include 'v-std-api'
+include 'v-std-service-user'
+
