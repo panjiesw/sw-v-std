@@ -135,7 +135,6 @@ configure(subprojects) {
         compile 'ch.qos.logback:logback-classic'
         compile 'org.projectlombok:lombok'
         compile 'org.apache.commons:commons-lang3:3.4'
-        compile 'commons-validator:commons-validator:1.4.1'
         testCompile 'junit:junit'
         testCompile 'org.mockito:mockito-core:1.+'
     }

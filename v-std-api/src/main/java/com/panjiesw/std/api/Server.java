@@ -3,6 +3,7 @@ package com.panjiesw.std.api;
 import com.panjiesw.std.api.components.ApiComponent;
 import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
+import io.vertx.ext.web.handler.BodyHandler;
 import io.vertx.ext.web.handler.LoggerHandler;
 import io.vertx.ext.web.handler.LoggerHandler.Format;
 import lombok.extern.slf4j.Slf4j;
@@ -29,6 +30,7 @@ public final class Server {
 
   private void setupRootHandlers() {
     router.route().handler(LoggerHandler.create(Format.SHORT));
+    router.route().handler(BodyHandler.create());
   }
 
   public static Server init(ApiComponent app) {

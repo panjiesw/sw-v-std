@@ -5,6 +5,7 @@ import com.panjiesw.std.api.Server_MembersInjector;
 import com.panjiesw.std.api.modules.ApiModule;
 import com.panjiesw.std.api.modules.ApiModule_RouterFactory;
 import com.panjiesw.std.api.modules.ApiModule_UserServiceFactory;
+import com.panjiesw.std.api.modules.ApiModule_ValidatorFactory;
 import com.panjiesw.std.api.modules.ApiModule_VertxFactory;
 import com.panjiesw.std.service.user.UserService;
 import dagger.MembersInjector;
@@ -13,12 +14,14 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 import javax.annotation.Generated;
 import javax.inject.Provider;
+import javax.validation.Validator;
 
 @Generated("dagger.internal.codegen.ComponentProcessor")
 public final class DaggerApiComponent implements ApiComponent {
   private Provider<Vertx> vertxProvider;
   private Provider<Router> routerProvider;
   private Provider<UserService> userServiceProvider;
+  private Provider<Validator> validatorProvider;
   private MembersInjector<Server> serverMembersInjector;
 
   private DaggerApiComponent(Builder builder) {  
@@ -34,6 +37,7 @@ public final class DaggerApiComponent implements ApiComponent {
     this.vertxProvider = ScopedProvider.create(ApiModule_VertxFactory.create(builder.apiModule));
     this.routerProvider = ScopedProvider.create(ApiModule_RouterFactory.create(builder.apiModule));
     this.userServiceProvider = ScopedProvider.create(ApiModule_UserServiceFactory.create(builder.apiModule));
+    this.validatorProvider = ScopedProvider.create(ApiModule_ValidatorFactory.create(builder.apiModule));
     this.serverMembersInjector = Server_MembersInjector.create(vertxProvider, routerProvider);
   }
 
@@ -50,6 +54,11 @@ public final class DaggerApiComponent implements ApiComponent {
   @Override
   public UserService userService() {  
     return userServiceProvider.get();
+  }
+
+  @Override
+  public Validator validator() {  
+    return validatorProvider.get();
   }
 
   @Override

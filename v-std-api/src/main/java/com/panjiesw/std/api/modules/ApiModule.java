@@ -7,6 +7,8 @@ import io.vertx.core.Vertx;
 import io.vertx.ext.web.Router;
 
 import javax.inject.Singleton;
+import javax.validation.Validation;
+import javax.validation.Validator;
 
 /**
  * @author PanjieSW.
@@ -33,6 +35,12 @@ public class ApiModule {
   @Provides
   public Router router() {
     return router;
+  }
+
+  @Singleton
+  @Provides
+  public Validator validator() {
+    return Validation.buildDefaultValidatorFactory().getValidator();
   }
 
   @Singleton

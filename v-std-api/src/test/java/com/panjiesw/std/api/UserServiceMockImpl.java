@@ -9,7 +9,8 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -18,15 +19,21 @@ import java.util.Map;
  */
 public class UserServiceMockImpl implements UserService {
 
-  private Map<Long, JsonObject> users = new HashMap<>(5);
+  private final Map<Long, JsonObject> users = new LinkedHashMap<>(5);
+  private final List<Long> ids = new LinkedList<>();
 
   public UserServiceMockImpl() {
     users.put(1L, new JsonObject().put("id", 1L).put("username", "someone"));
     users.put(2L, new JsonObject().put("id", 2L));
+    ids.add(1L);
+    ids.add(2L);
   }
 
   @Override
   public UserService save(JsonObject payload, Handler<AsyncResult<JsonArray>> resultHandler) {
+    payload.put("id", ids.get(ids.size() - 1));
+    users.put(payload.getLong("id"), payload);
+    resultHandler.handle(Future.succeededFuture(new JsonArray()));
     return this;
   }
 
