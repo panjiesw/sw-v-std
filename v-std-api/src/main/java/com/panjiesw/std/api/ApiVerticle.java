@@ -3,6 +3,7 @@ package com.panjiesw.std.api;
 import com.panjiesw.std.api.components.ApiComponent;
 import com.panjiesw.std.api.components.DaggerApiComponent;
 import com.panjiesw.std.api.modules.ApiModule;
+import com.panjiesw.std.service.user.UserService;
 import io.vertx.core.*;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
@@ -87,7 +88,8 @@ public class ApiVerticle extends AbstractVerticle {
 
   private void startModule(Future<Void> startFuture) {
     ApiComponent app = DaggerApiComponent.builder()
-      .apiModule(new ApiModule(vertx))
+      .apiModule(new ApiModule(vertx).userService(
+        UserService.createEventBusProxy(vertx, "com.panjiesw.std.service-user")))
       .build();
     Server.init(app).start();
     startFuture.complete();

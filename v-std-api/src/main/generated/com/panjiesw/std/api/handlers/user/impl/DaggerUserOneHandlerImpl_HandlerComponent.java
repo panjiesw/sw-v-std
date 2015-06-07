@@ -5,6 +5,7 @@ import com.panjiesw.std.api.handlers.ApiHandler;
 import com.panjiesw.std.api.handlers.user.impl.UserOneHandlerImpl.HandlerComponent;
 import com.panjiesw.std.api.modules.HandlerModule;
 import com.panjiesw.std.api.modules.HandlerModule_HandlerFactory;
+import com.panjiesw.std.service.user.UserService;
 import dagger.MembersInjector;
 import dagger.internal.Factory;
 import dagger.internal.ScopedProvider;
@@ -16,6 +17,7 @@ import javax.inject.Provider;
 public final class DaggerUserOneHandlerImpl_HandlerComponent implements HandlerComponent {
   private Provider<ApiHandler> handlerProvider;
   private Provider<Router> routerProvider;
+  private Provider<UserService> userServiceProvider;
   private MembersInjector<UserOneHandlerImpl> userOneHandlerImplMembersInjector;
 
   private DaggerUserOneHandlerImpl_HandlerComponent(Builder builder) {  
@@ -38,7 +40,16 @@ public final class DaggerUserOneHandlerImpl_HandlerComponent implements HandlerC
         return provided;
       }
     };
-    this.userOneHandlerImplMembersInjector = UserOneHandlerImpl_MembersInjector.create(routerProvider);
+    this.userServiceProvider = new Factory<UserService>() {
+      @Override public UserService get() {
+        UserService provided = builder.apiComponent.userService();
+        if (provided == null) {
+          throw new NullPointerException("Cannot return null from a non-@Nullable component method");
+        }
+        return provided;
+      }
+    };
+    this.userOneHandlerImplMembersInjector = UserOneHandlerImpl_MembersInjector.create(routerProvider, userServiceProvider);
   }
 
   @Override

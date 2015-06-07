@@ -16,6 +16,8 @@ public class ApiModule {
   private final Vertx vertx;
   private final Router router;
 
+  private UserService userService;
+
   public ApiModule(Vertx vertx) {
     this.vertx = vertx;
     this.router = Router.router(this.vertx);
@@ -36,6 +38,11 @@ public class ApiModule {
   @Singleton
   @Provides
   public UserService userService() {
-    return UserService.createEventBusProxy(vertx, "com.panjiesw.std.service-user");
+    return userService;
+  }
+
+  public ApiModule userService(UserService userService) {
+    this.userService = userService;
+    return this;
   }
 }
