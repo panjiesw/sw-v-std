@@ -1,5 +1,7 @@
 package com.panjiesw.std.api;
 
+import com.panjiesw.std.common.exceptions.NotFoundException;
+import com.panjiesw.std.common.exceptions.ServiceException;
 import com.panjiesw.std.service.user.UserService;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
@@ -20,6 +22,7 @@ public class UserServiceMockImpl implements UserService {
 
   public UserServiceMockImpl() {
     users.put(1L, new JsonObject().put("id", 1L).put("username", "someone"));
+    users.put(2L, new JsonObject().put("id", 2L));
   }
 
   @Override
@@ -39,10 +42,14 @@ public class UserServiceMockImpl implements UserService {
 
   @Override
   public UserService one(Long id, Handler<AsyncResult<JsonObject>> resultHandler) {
-    if (users.containsKey(id)) {
-      resultHandler.handle(Future.succeededFuture(users.get(id)));
+    if (id.equals(2L)) {
+      resultHandler.handle(Future.failedFuture(new ServiceException("Unknown Exception", new Exception("Dummy"))));
     } else {
-      resultHandler.handle(Future.failedFuture("Not found"));
+      if (users.containsKey(id)) {
+        resultHandler.handle(Future.succeededFuture(users.get(id)));
+      } else {
+        resultHandler.handle(Future.failedFuture(new NotFoundException("id")));
+      }
     }
     return this;
   }

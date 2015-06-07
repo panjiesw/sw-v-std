@@ -1,4 +1,4 @@
-jar.baseName = 'blangszj-service-user'
+jar.baseName = 'std-service-user'
 
 apply plugin: 'nu.studer.jooq'
 
@@ -66,6 +66,8 @@ task codegen(type: JavaCompile) {
 }
 
 dependencies {
+    compile project(':v-std-common')
+
     compile 'io.vertx:vertx-mysql-postgresql-client'
     compile 'org.jooq:jooq'
     compile 'org.jooq:jooq-meta'

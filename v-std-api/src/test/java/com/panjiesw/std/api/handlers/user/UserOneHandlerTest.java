@@ -25,7 +25,6 @@ import java.net.HttpURLConnection;
 public class UserOneHandlerTest {
   private Vertx vertx;
 
-  private UserService userService;
   private HttpClient httpClient;
 
   @Before
@@ -35,7 +34,7 @@ public class UserOneHandlerTest {
       .createHttpClient(
         new HttpClientOptions().setDefaultHost("localhost").setDefaultPort(7777));
 
-    userService = new UserServiceMockImpl();
+    UserService userService = new UserServiceMockImpl();
     ApiModule apiModule = new ApiModule(vertx).userService(userService);
     ApiTestVerticle apiTestVerticle = new ApiTestVerticle(apiModule);
     vertx.deployVerticle(apiTestVerticle, context.asyncAssertSuccess());
@@ -43,6 +42,7 @@ public class UserOneHandlerTest {
 
   @After
   public void tearDown() throws Exception {
+    vertx.close();
   }
 
   @Test
@@ -63,6 +63,15 @@ public class UserOneHandlerTest {
     Async async = context.async();
     httpClient.getNow("/users/6", res -> {
       context.assertEquals(res.statusCode(), HttpURLConnection.HTTP_NOT_FOUND);
+      async.complete();
+    });
+  }
+
+  @Test
+  public void testHandleException(TestContext context) throws Exception {
+    Async async = context.async();
+    httpClient.getNow("/users/2", res -> {
+      context.assertEquals(res.statusCode(), HttpURLConnection.HTTP_INTERNAL_ERROR);
       async.complete();
     });
   }

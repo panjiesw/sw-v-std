@@ -12,6 +12,7 @@ sourceSets {
 }
 
 dependencies {
+    compile project(':v-std-common')
     compile project(':v-std-service-user')
 
     compile 'io.vertx:vertx-web'

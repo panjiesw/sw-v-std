@@ -1,5 +1,7 @@
 package com.panjiesw.std.service.user;
 
+import com.panjiesw.std.common.exceptions.NotFoundException;
+import com.panjiesw.std.common.exceptions.ServiceException;
 import io.vertx.core.AsyncResult;
 import io.vertx.core.Future;
 import io.vertx.core.Handler;
@@ -102,10 +104,11 @@ public class UserServiceImpl implements UserService {
         if (result.getNumRows() > 0) {
           vertx.runOnContext(v -> resultHandler.handle(Future.succeededFuture(result.getRows().get(0))));
         } else {
-          vertx.runOnContext(v -> resultHandler.handle(Future.failedFuture("")));
+          vertx.runOnContext(v -> resultHandler.handle(Future.failedFuture(new NotFoundException(sql))));
         }
       } else {
-        vertx.runOnContext(v -> resultHandler.handle(Future.failedFuture(res.cause())));
+        vertx.runOnContext(v -> resultHandler.handle(
+          Future.failedFuture(new ServiceException("queryOne failed", res.cause()))));
       }
     });
     return this;

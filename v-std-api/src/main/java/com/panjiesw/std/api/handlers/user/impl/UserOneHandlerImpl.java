@@ -5,6 +5,7 @@ import com.panjiesw.std.api.components.AbstractHandlerComponent;
 import com.panjiesw.std.api.components.ApiComponent;
 import com.panjiesw.std.api.handlers.user.UserOneHandler;
 import com.panjiesw.std.api.modules.HandlerModule;
+import com.panjiesw.std.common.exceptions.NotFoundException;
 import com.panjiesw.std.service.user.UserService;
 import dagger.Component;
 import io.vertx.core.http.HttpServerResponse;
@@ -47,8 +48,14 @@ public class UserOneHandlerImpl implements UserOneHandler {
       if (res.succeeded()) {
         response.end(res.result().encode());
       } else {
-        response.setStatusCode(HttpURLConnection.HTTP_NOT_FOUND)
-          .end(new JsonObject().put("message", "Not Found").encode());
+        //noinspection ThrowableResultOfMethodCallIgnored
+        if (res.cause() instanceof NotFoundException) {
+          response.setStatusCode(HttpURLConnection.HTTP_NOT_FOUND)
+            .end(new JsonObject().put("message", "Not Found").encode());
+        } else {
+          response.setStatusCode(HttpURLConnection.HTTP_INTERNAL_ERROR)
+            .end(new JsonObject().put("message", "Server/Service error").encode());
+        }
       }
     });
   }
