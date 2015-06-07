@@ -38,6 +38,8 @@ public final class Server {
     app.inject(server);
     server.setupRootHandlers();
 
+    ApiRouter.create(app);
+
     return server;
   }
 }
