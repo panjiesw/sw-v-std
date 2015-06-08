@@ -8,10 +8,7 @@ import io.vertx.core.*;
 import io.vertx.core.json.JsonObject;
 import lombok.extern.slf4j.Slf4j;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 import java.util.Map.Entry;
 
 /**
@@ -21,8 +18,8 @@ import java.util.Map.Entry;
 @Slf4j
 public class ApiVerticle extends AbstractVerticle {
 
-  public static final List<String> allowedServices = Arrays.asList("user", "role");
-  public static final List<String> deploymentIDs = new ArrayList<>();
+  public static final List<String> allowedServices = Collections.unmodifiableList(Arrays.asList("user", "role"));
+  public static final List<String> deploymentIDs = Collections.unmodifiableList(new ArrayList<>());
 
   @Override
   public void start(Future<Void> startFuture) throws Exception {
