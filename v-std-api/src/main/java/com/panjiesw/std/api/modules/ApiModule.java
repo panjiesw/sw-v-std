@@ -4,9 +4,11 @@ import com.panjiesw.std.service.user.UserService;
 import dagger.Module;
 import dagger.Provides;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.web.Router;
 
+import javax.inject.Named;
 import javax.inject.Singleton;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -21,6 +23,7 @@ public class ApiModule {
 
   private JWTAuth authProvider;
   private UserService userService;
+  private JsonObject verticleConfig;
 
   public ApiModule(Vertx vertx) {
     this.vertx = vertx;
@@ -64,6 +67,18 @@ public class ApiModule {
 
   public ApiModule authProvider(JWTAuth authProvider) {
     this.authProvider = authProvider;
+    return this;
+  }
+
+  @Singleton
+  @Provides
+  @Named("verticleConfig")
+  public JsonObject verticleConfig() {
+    return verticleConfig;
+  }
+
+  public ApiModule verticleConfig(JsonObject config) {
+    this.verticleConfig = config;
     return this;
   }
 }

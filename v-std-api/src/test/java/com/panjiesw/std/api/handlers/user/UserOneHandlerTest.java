@@ -1,18 +1,16 @@
 package com.panjiesw.std.api.handlers.user;
 
-import com.panjiesw.std.api.ApiTestVerticle;
+import com.panjiesw.std.api.AbstractHandlerTest;
 import com.panjiesw.std.api.UserServiceMockImpl;
 import com.panjiesw.std.api.modules.ApiModule;
 import com.panjiesw.std.service.user.UserService;
-import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpClient;
-import io.vertx.core.http.HttpClientOptions;
+import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
+import io.vertx.core.Handler;
 import io.vertx.core.json.JsonObject;
 import io.vertx.ext.unit.Async;
 import io.vertx.ext.unit.TestContext;
 import io.vertx.ext.unit.junit.VertxUnitRunner;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 
@@ -22,27 +20,26 @@ import java.net.HttpURLConnection;
  * @author PanjieSW.
  */
 @RunWith(VertxUnitRunner.class)
-public class UserOneHandlerTest {
-  private Vertx vertx;
+public class UserOneHandlerTest extends AbstractHandlerTest {
 
-  private HttpClient httpClient;
-
-  @Before
-  public void setUp(TestContext context) throws Exception {
-    vertx = Vertx.vertx();
-    httpClient = vertx
-      .createHttpClient(
-        new HttpClientOptions().setDefaultHost("localhost").setDefaultPort(7777));
-
+  @Override
+  protected ApiModule apiModule() {
     UserService userService = new UserServiceMockImpl();
-    ApiModule apiModule = new ApiModule(vertx).userService(userService);
-    ApiTestVerticle apiTestVerticle = new ApiTestVerticle(apiModule);
-    vertx.deployVerticle(apiTestVerticle, context.asyncAssertSuccess());
+    return new ApiModule(vertx).userService(userService);
   }
 
-  @After
-  public void tearDown() throws Exception {
-    vertx.close();
+  @Override
+  protected void start(Handler<AsyncResult<JsonObject>> startFuture) {
+    startFuture.handle(
+      Future.succeededFuture(
+        new JsonObject()
+          .put("auth", new JsonObject()
+            .put("enable", false))));
+  }
+
+  @Override
+  protected void close(Handler<AsyncResult<Void>> closeFuture) {
+    closeFuture.handle(Future.succeededFuture());
   }
 
   @Test

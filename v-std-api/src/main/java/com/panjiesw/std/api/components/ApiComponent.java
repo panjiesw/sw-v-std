@@ -6,6 +6,7 @@ import com.panjiesw.std.api.modules.ApiModule;
 import com.panjiesw.std.service.user.UserService;
 import dagger.Component;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.web.Router;
 
@@ -20,6 +21,7 @@ import javax.validation.Validator;
 public interface ApiComponent {
   Vertx vertx();
   Router router();
+//  JsonObject verticleConfig();
   JWTAuth authProvider();
   UserService userService();
   Validator validator();

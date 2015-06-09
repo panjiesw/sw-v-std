@@ -9,11 +9,13 @@ import com.panjiesw.std.api.modules.ApiModule_AuthProviderFactory;
 import com.panjiesw.std.api.modules.ApiModule_RouterFactory;
 import com.panjiesw.std.api.modules.ApiModule_UserServiceFactory;
 import com.panjiesw.std.api.modules.ApiModule_ValidatorFactory;
+import com.panjiesw.std.api.modules.ApiModule_VerticleConfigFactory;
 import com.panjiesw.std.api.modules.ApiModule_VertxFactory;
 import com.panjiesw.std.service.user.UserService;
 import dagger.MembersInjector;
 import dagger.internal.ScopedProvider;
 import io.vertx.core.Vertx;
+import io.vertx.core.json.JsonObject;
 import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.web.Router;
 import javax.annotation.Generated;
@@ -28,6 +30,7 @@ public final class DaggerApiComponent implements ApiComponent {
   private Provider<UserService> userServiceProvider;
   private Provider<Validator> validatorProvider;
   private MembersInjector<Server> serverMembersInjector;
+  private Provider<JsonObject> verticleConfigProvider;
   private MembersInjector<ApiRouter> apiRouterMembersInjector;
 
   private DaggerApiComponent(Builder builder) {  
@@ -46,7 +49,8 @@ public final class DaggerApiComponent implements ApiComponent {
     this.userServiceProvider = ScopedProvider.create(ApiModule_UserServiceFactory.create(builder.apiModule));
     this.validatorProvider = ScopedProvider.create(ApiModule_ValidatorFactory.create(builder.apiModule));
     this.serverMembersInjector = Server_MembersInjector.create(vertxProvider, routerProvider);
-    this.apiRouterMembersInjector = ApiRouter_MembersInjector.create(authProvider, routerProvider);
+    this.verticleConfigProvider = ScopedProvider.create(ApiModule_VerticleConfigFactory.create(builder.apiModule));
+    this.apiRouterMembersInjector = ApiRouter_MembersInjector.create(authProvider, routerProvider, vertxProvider, verticleConfigProvider);
   }
 
   @Override

@@ -94,6 +94,7 @@ public class ApiVerticle extends AbstractVerticle {
     }
 
     ApiModule apiModule = new ApiModule(vertx)
+      .verticleConfig(config())
       .authProvider(autProvider)
       .userService(UserService.createEventBusProxy(vertx, "com.panjiesw.std.service-user"));
 
