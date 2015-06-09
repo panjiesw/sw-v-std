@@ -9,10 +9,7 @@ import io.vertx.core.Handler;
 import io.vertx.core.json.JsonArray;
 import io.vertx.core.json.JsonObject;
 
-import java.util.LinkedHashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * @author PanjieSW.
@@ -31,9 +28,13 @@ public class UserServiceMockImpl implements UserService {
 
   @Override
   public UserService save(JsonObject payload, Handler<AsyncResult<JsonArray>> resultHandler) {
-    payload.put("id", ids.get(ids.size() - 1));
-    users.put(payload.getLong("id"), payload);
-    resultHandler.handle(Future.succeededFuture(new JsonArray()));
+    if (!Objects.equals(payload.getString("username"), "error")) {
+      payload.put("id", ids.get(ids.size() - 1));
+      users.put(payload.getLong("id"), payload);
+      resultHandler.handle(Future.succeededFuture(new JsonArray()));
+    } else {
+      resultHandler.handle(Future.failedFuture(new Exception("dummy")));
+    }
     return this;
   }
 

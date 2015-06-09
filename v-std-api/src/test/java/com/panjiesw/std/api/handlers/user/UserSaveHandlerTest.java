@@ -70,4 +70,16 @@ public class UserSaveHandlerTest extends AbstractHandlerTest {
       .write(new JsonObject().put("username", "something").encode())
       .end();
   }
+
+  @Test
+  public void testHandleError(TestContext context) throws Exception {
+    Async async = context.async();
+    httpClient.post("/users", response -> {
+      context.assertEquals(response.statusCode(), HttpURLConnection.HTTP_INTERNAL_ERROR);
+      async.complete();
+    }).putHeader("content-type", "application/json")
+      .setChunked(true)
+      .write(new JsonObject().put("username", "error").put("email", "something@somewhere.com").encode())
+      .end();
+  }
 }
