@@ -4,6 +4,7 @@ import com.panjiesw.std.service.user.UserService;
 import dagger.Module;
 import dagger.Provides;
 import io.vertx.core.Vertx;
+import io.vertx.ext.auth.jwt.JWTAuth;
 import io.vertx.ext.web.Router;
 
 import javax.inject.Singleton;
@@ -18,6 +19,7 @@ public class ApiModule {
   private final Vertx vertx;
   private final Router router;
 
+  private JWTAuth authProvider;
   private UserService userService;
 
   public ApiModule(Vertx vertx) {
@@ -51,6 +53,17 @@ public class ApiModule {
 
   public ApiModule userService(UserService userService) {
     this.userService = userService;
+    return this;
+  }
+
+  @Singleton
+  @Provides
+  public JWTAuth authProvider() {
+    return authProvider;
+  }
+
+  public ApiModule authProvider(JWTAuth authProvider) {
+    this.authProvider = authProvider;
     return this;
   }
 }

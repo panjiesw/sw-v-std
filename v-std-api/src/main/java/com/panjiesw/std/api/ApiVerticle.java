@@ -6,6 +6,7 @@ import com.panjiesw.std.api.modules.ApiModule;
 import com.panjiesw.std.service.user.UserService;
 import io.vertx.core.*;
 import io.vertx.core.json.JsonObject;
+import io.vertx.ext.auth.jwt.JWTAuth;
 import lombok.extern.slf4j.Slf4j;
 
 import java.util.*;
@@ -19,7 +20,7 @@ import java.util.Map.Entry;
 public class ApiVerticle extends AbstractVerticle {
 
   public static final List<String> allowedServices = Collections.unmodifiableList(Arrays.asList("user", "role"));
-  public static final List<String> deploymentIDs = Collections.unmodifiableList(new ArrayList<>());
+  public static final List<String> deploymentIDs = new ArrayList<>();
 
   @Override
   public void start(Future<Void> startFuture) throws Exception {
@@ -84,11 +85,33 @@ public class ApiVerticle extends AbstractVerticle {
   }
 
   private void startModule(Future<Void> startFuture) {
+    JWTAuth autProvider = this.createAuthProvider();
+    if (autProvider == null) {
+      String message = "AuthProvider failed to initialized";
+      log.error(message);
+      startFuture.fail(new IllegalArgumentException(message));
+      return;
+    }
+
+    ApiModule apiModule = new ApiModule(vertx)
+      .authProvider(autProvider)
+      .userService(UserService.createEventBusProxy(vertx, "com.panjiesw.std.service-user"));
+
     ApiComponent app = DaggerApiComponent.builder()
-      .apiModule(new ApiModule(vertx).userService(
-        UserService.createEventBusProxy(vertx, "com.panjiesw.std.service-user")))
+      .apiModule(apiModule)
       .build();
     Server.init(app).start();
     startFuture.complete();
+  }
+
+  private JWTAuth createAuthProvider() {
+    log.info("Registering AuthProvider [{}]", JWTAuth.class.getName());
+    JsonObject authConfig = config().getJsonObject("auth");
+    if (authConfig == null) {
+      log.error("No config for auth provider, aborting");
+      return null;
+    }
+
+    return JWTAuth.create(authConfig);
   }
 }
